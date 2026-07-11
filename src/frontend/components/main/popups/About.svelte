@@ -23,8 +23,8 @@
 
 <div style="text-align: center;">
     <div class="logo">
-        <img style="height: 35px;" src="./import-logos/freeshow.webp" alt="FreeShow-logo" draggable={false} />
-        <h1 style="color: var(--text);font-size: 1.7em;">FreeShow</h1>
+        <img style="height: 35px;" src="./import-logos/freeshow.webp" alt="GOC Church Presenter logo" draggable={false} />
+        <h1 style="color: var(--text);font-size: 1.7em;">GOC Church Presenter</h1>
     </div>
 
     <p style="font-size: 0.8em;margin-top: 2px;">
@@ -34,9 +34,9 @@
         </MaterialButton>
     </p>
 
-    <!-- <p>
-        <Link url="https://churchapps.org/">ChurchApps</Link>
-    </p> -->
+    <p style="font-size: 0.75em;opacity: 0.6;margin-top: 6px;">
+        Based on <Link url="https://freeshow.app/">FreeShow</Link> by <Link url="https://churchapps.org/">ChurchApps</Link>
+    </p>
 </div>
 
 <hr />

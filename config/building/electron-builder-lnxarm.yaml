@@ -1,6 +1,6 @@
 appId: app.freeshow
-productName: FreeShow
-artifactName: FreeShow-${version}-${arch}.${ext}
+productName: GOC Church Presenter
+artifactName: GOC-Church-Presenter-${version}-${arch}.${ext}
 
 files:
     - build/electron/**

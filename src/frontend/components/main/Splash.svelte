@@ -47,7 +47,7 @@
 </script>
 
 <Center class="context #splash">
-    <h1>FreeShow</h1>
+    <h1>GOC Church Presenter</h1>
     <p style="opacity: 0.7;">v{$version}</p>
     {#if $special.splashText}
         <p style="padding-top: 30px">
