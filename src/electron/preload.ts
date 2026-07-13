@@ -15,6 +15,15 @@ const LOG_MESSAGES: boolean = process.env.NODE_ENV !== "production"
 const filteredChannelsData: string[] = ["AUDIO_MAIN", "VISUALIZER_DATA", "STREAM", "BUFFER", "REQUEST_STREAM", "MAIN_TIME", "MAIN_SLIDE_VIDEO", "GET_THUMBNAIL", "ACTIVE_TIMERS", "RECEIVE_STREAM", "CHECK_RAM_USAGE", "TIMECODE_VALUE", "TIMECODE_AUDIO_DATA", "SPOTIFY_GET_STATE"]
 const filteredChannels: ValidChannels[] = ["AUDIO"]
 
+// FreeShow multiplexes many independent subscriptions over a few shared IPC channels (notably MAIN
+// and OUTPUT). A single ipcRenderer channel can therefore legitimately have more than Node's default
+// of 10 concurrent listeners - e.g. in the output window there is one OUTPUT listener per on-screen
+// media item, which doubles while two slides overlap during a crossfade transition. These per-item
+// listeners are removed on component destroy (see MediaItem.svelte / BackgroundMedia.svelte) and the
+// global receivers are registered once per window, so this is expected concurrency, not a leak.
+// Raise the cap to a bounded value (not 0/unlimited) so a genuine runaway leak would still warn.
+ipcRenderer.setMaxListeners(100)
+
 const storedReceivers: { [key: string]: (e: IpcRendererEvent, args: any) => void } = {}
 
 contextBridge.exposeInMainWorld("api", {
