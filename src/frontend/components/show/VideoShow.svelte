@@ -339,8 +339,21 @@
     $: mediaStyleBlurString = `position: absolute;filter: ${mediaStyle.filter || ""} blur(${mediaStyle.fitOptions?.blurAmount ?? 6}px) opacity(${mediaStyle.fitOptions?.blurOpacity || 0.3});object-fit: cover;width: 100%;height: 100%;transform: scale(${mediaStyle.flipped ? "-1" : "1"}, ${mediaStyle.flippedY ? "-1" : "1"});`
 
     let blurVideo: HTMLVideoElement | undefined
+    // Safely start playback: ignore the expected AbortError that fires when a pending play()
+    // is interrupted by a pause() or by the media element being removed during rapid slide changes.
+    // Any other (unexpected) media error is still surfaced so real problems are not hidden.
+    function safePlay(el: HTMLVideoElement | null | undefined) {
+        if (!el) return
+        const playPromise = el.play()
+        if (playPromise && typeof playPromise.catch === "function") {
+            playPromise.catch((err: any) => {
+                if (err?.name === "AbortError") return
+                console.error("Unexpected video playback error in VideoShow:", err)
+            })
+        }
+    }
     $: if (blurVideo && (videoTime < blurVideo.currentTime - 0.3 || videoTime > blurVideo.currentTime + 0.3)) blurVideo.currentTime = videoTime
-    $: if (!videoData.paused && blurVideo?.paused) blurVideo.play()
+    $: if (!videoData.paused && blurVideo?.paused) safePlay(blurVideo)
     $: blurPausedState = videoData.paused
 
     onDestroy(() => {

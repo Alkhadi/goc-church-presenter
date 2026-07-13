@@ -303,7 +303,9 @@
     $: if (stateSignature !== lastRenderedSignature) {
         autoSizeReady = false
         // Check if autosize is active - for STAGE, use stageAutoSize since slide items don't have auto/textFit set
-        const hasAutoSize = stageAutoSize || item?.auto || (item?.textFit || "none") !== "none"
+        // Text items default to shrink-to-fit (unless explicitly "none"), so long text auto-shrinks instead of being clipped
+        const isTextItemForAuto = (item?.type || "text") === "text"
+        const hasAutoSize = stageAutoSize || item?.auto || (isTextItemForAuto ? item?.textFit !== "none" : (item?.textFit || "none") !== "none")
         if (hasAutoSize) {
             // Determine if we'll hide during autosize calculation
             const willHide = shouldHideUntilAutoSizeCompletes()
@@ -446,7 +448,11 @@
 
         const isTextItem = (item.type || "text") === "text"
         const isDynamic = isTextItem && getItemText(isStage ? stageItem : item).includes("{")
-        let textFit = item.textFit || (item.auto ? (isTextItem ? "shrinkToFit" : "growToFit") : "none")
+        // Default text items to shrink-to-fit so long content (8+ lines, imported/legacy songs without an
+        // explicit textFit) auto-shrinks to stay fully visible instead of being clipped by the item's
+        // overflow:hidden. Short text that already fits is unchanged (shrinkToFit never grows). Explicit
+        // "none" and non-text items keep their previous behaviour; STAGE is handled separately below.
+        let textFit = item.textFit || (item.auto ? (isTextItem ? "shrinkToFit" : "growToFit") : isTextItem ? "shrinkToFit" : "none")
 
         if (isStage) {
             // wait for text content to populate if dynamic value
@@ -622,12 +628,12 @@
 
         // Use detailed validation to ensure we catch all autosize candidates
         // For STAGE: stageAutoSize controls autosize, slide items don't have auto/textFit set
+        // This function only runs for text items (type check above); text items now default to
+        // shrink-to-fit, so hide until autosize completes unless auto-fit is explicitly disabled.
         const isExplicitNone = item?.textFit === "none"
-        const isExplicitActive = item?.textFit && item?.textFit !== "none"
-        const isImpliedActive = !item?.textFit && item?.auto
         const isStageAutoSizeActive = stageAutoSize
 
-        if (!isStageAutoSizeActive && (isExplicitNone || (!isExplicitActive && !isImpliedActive))) {
+        if (!isStageAutoSizeActive && isExplicitNone) {
             return false
         }
 

@@ -435,6 +435,7 @@ function getDefaultTemplates() {
             {
                 style: DEFAULT_ITEM_STYLE,
                 align: "",
+                textFit: "shrinkToFit",
                 lines: [{ align: "", text: [{ value: translateText("example.big"), style: "font-size: 120px;" }] }]
             }
         ]
@@ -448,6 +449,7 @@ function getDefaultTemplates() {
             {
                 style: DEFAULT_ITEM_STYLE,
                 align: "",
+                textFit: "shrinkToFit",
                 lines: [{ align: "", text: [{ value: translateText("example.default"), style: "font-size: 100px;" }] }]
             }
         ]
@@ -461,6 +463,7 @@ function getDefaultTemplates() {
             {
                 style: DEFAULT_ITEM_STYLE,
                 align: "",
+                textFit: "shrinkToFit",
                 lines: [{ align: "", text: [{ value: translateText("example.small"), style: "font-size: 80px;" }] }]
             }
         ]
@@ -474,6 +477,7 @@ function getDefaultTemplates() {
             {
                 style: DEFAULT_ITEM_STYLE,
                 align: "",
+                textFit: "shrinkToFit",
                 lines: [
                     {
                         align: "",
@@ -497,6 +501,7 @@ function getDefaultTemplates() {
             {
                 style: DEFAULT_ITEM_STYLE,
                 align: "",
+                textFit: "shrinkToFit",
                 lines: [
                     {
                         align: "",
@@ -520,6 +525,7 @@ function getDefaultTemplates() {
             {
                 style: DEFAULT_ITEM_STYLE,
                 align: "",
+                textFit: "shrinkToFit",
                 lines: [
                     {
                         align: "",
@@ -642,6 +648,29 @@ function getDefaultTemplates() {
                     { align: "", text: [{ value: "2", style: "font-size: 100px;" }] },
                     { align: "", text: [{ value: "3", style: "font-size: 100px;" }] },
                     { align: "", text: [{ value: "4", style: "font-size: 100px;" }] }
+                ]
+            }
+        ]
+    }
+
+    // GOC professional projector template (opt-in): readable panel + auto shrink-to-fit
+    // Safe default/fallback for songs. Preserves the media/background; adds only a text panel.
+    // To disable: simply don't apply this template (existing templates are unchanged).
+    a.goc_song = {
+        isDefault: true,
+        name: "GOC Projector",
+        color: "#d4af37",
+        category: "song",
+        items: [
+            {
+                style: "top:260px;left:130px;width:1660px;height:560px;background: linear-gradient(180deg, rgba(10,20,45,0.72) 0%, rgba(0,0,0,0.72) 100%);backdrop-filter: blur(8px);border-radius: 24px;border-width: 2px;border-style: solid;border-color: rgba(212,175,55,0.55);padding: 60px;",
+                align: "",
+                textFit: "shrinkToFit",
+                lines: [
+                    { align: "", text: [{ value: "1", style: "font-size: 90px;font-weight: 600;color: #ffffff;text-shadow: 0px 3px 10px rgba(0,0,0,0.65);line-height: 1.18em;" }] },
+                    { align: "", text: [{ value: "2", style: "font-size: 90px;font-weight: 600;color: #ffffff;text-shadow: 0px 3px 10px rgba(0,0,0,0.65);line-height: 1.18em;" }] },
+                    { align: "", text: [{ value: "3", style: "font-size: 90px;font-weight: 600;color: #ffffff;text-shadow: 0px 3px 10px rgba(0,0,0,0.65);line-height: 1.18em;" }] },
+                    { align: "", text: [{ value: "4", style: "font-size: 90px;font-weight: 600;color: #ffffff;text-shadow: 0px 3px 10px rgba(0,0,0,0.65);line-height: 1.18em;" }] }
                 ]
             }
         ]
@@ -847,7 +876,7 @@ function getDefaultScriptureTemplates() {
         },
         items: [
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 30px;left: 30px;width: 1860px;height: 865px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;",
                 align: "",
                 lines: [
@@ -878,7 +907,7 @@ function getDefaultScriptureTemplates() {
         settings: { mode: "scripture" },
         items: [
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 40px;left: 30px;width: 1860px;height: 400px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -892,7 +921,7 @@ function getDefaultScriptureTemplates() {
                 ]
             },
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 475px;left: 30px;width: 1860px;height: 400px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -923,7 +952,7 @@ function getDefaultScriptureTemplates() {
         settings: { mode: "scripture" },
         items: [
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 40px;left: 30px;width: 1860px;height: 250px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -937,7 +966,7 @@ function getDefaultScriptureTemplates() {
                 ]
             },
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 320px;left: 30px;width: 1860px;height: 250px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -951,7 +980,7 @@ function getDefaultScriptureTemplates() {
                 ]
             },
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 600px;left: 30px;width: 1860px;height: 250px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -982,7 +1011,7 @@ function getDefaultScriptureTemplates() {
         settings: { mode: "scripture" },
         items: [
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 40px;left: 30px;width: 1860px;height: 200px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -996,7 +1025,7 @@ function getDefaultScriptureTemplates() {
                 ]
             },
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 250px;left: 30px;width: 1860px;height: 200px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -1010,7 +1039,7 @@ function getDefaultScriptureTemplates() {
                 ]
             },
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 460px;left: 30px;width: 1860px;height: 200px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -1024,7 +1053,7 @@ function getDefaultScriptureTemplates() {
                 ]
             },
             {
-                // textFit: "shrinkToFit",
+                textFit: "shrinkToFit",
                 style: "top: 670px;left: 30px;width: 1860px;height: 200px;background-color: rgb(0 0 0 / 0.4);border-radius: 20px;padding: 25px;border-width: 1px;border-color: #cccccc;",
                 align: "",
                 lines: [
@@ -1042,6 +1071,38 @@ function getDefaultScriptureTemplates() {
                 align: "",
                 lines: [
                     { align: "", text: [{ value: "{scripture_reference}", style: "font-size: 55px;color: rgb(255 255 255 / 0.8);" }] },
+                    { align: "", text: [{ value: "{scripture_name}", style: "font-size: 40px;color: rgb(255 255 255 / 0.7);" }] }
+                ]
+            }
+        ]
+    }
+    // GOC professional scripture template (opt-in): navy/gold panel + auto shrink-to-fit
+    a.goc_scripture = {
+        isDefault: true,
+        name: "GOC Scripture",
+        color: "#d4af37",
+        category: "scripture",
+        settings: { mode: "scripture" },
+        items: [
+            {
+                style: "top: 120px;left: 130px;width: 1660px;height: 700px;background: linear-gradient(180deg, rgba(10,20,45,0.72) 0%, rgba(0,0,0,0.72) 100%);backdrop-filter: blur(8px);border-radius: 24px;border-width: 2px;border-style: solid;border-color: rgba(212,175,55,0.55);padding: 55px;",
+                align: "",
+                textFit: "shrinkToFit",
+                lines: [
+                    {
+                        align: "text-align: left;",
+                        text: [
+                            { value: "{scripture_number} ", style: "font-size: 42px;color: rgb(255 255 255 / 0.6);" },
+                            { value: "{scripture_text}", style: "font-size: 82px;color: #ffffff;text-shadow: 0px 3px 10px rgba(0,0,0,0.6);line-height: 1.2em;" }
+                        ]
+                    }
+                ]
+            },
+            {
+                style: "top: 860px;left: 130px;width: 1660px;height: 150px;",
+                align: "",
+                lines: [
+                    { align: "", text: [{ value: "{scripture_reference}", style: "font-size: 55px;color: rgb(255 255 255 / 0.85);text-shadow: 0px 2px 6px rgba(0,0,0,0.6);" }] },
                     { align: "", text: [{ value: "{scripture_name}", style: "font-size: 40px;color: rgb(255 255 255 / 0.7);" }] }
                 ]
             }
