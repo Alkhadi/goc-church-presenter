@@ -13,11 +13,11 @@ export const defaultThemes: { [key: string]: Themes } = {
             "primary-lighter": "#2f3542",
             "primary-darker": "#191923",
             "primary-darkest": "#12121c",
-            text: "#f0f0ff",
+            text: "#F5F1E8",
             textInvert: "#131313",
-            "secondary-text": "#f0f0ff",
-            secondary: "#F0008C",
-            "secondary-opacity": "rgba(240, 0, 140, 0.5)",
+            "secondary-text": "#161616",
+            secondary: "#D4AF37",
+            "secondary-opacity": "rgba(212, 175, 55, 0.5)",
             hover: "rgb(255 255 255 / 0.05)",
             focus: "rgb(255 255 255 / 0.1)"
         }

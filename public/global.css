@@ -32,11 +32,11 @@
     --primary-lighter: #2f3542;
     --primary-darker: #191923;
     --primary-darkest: #12121c;
-    --text: #f0f0ff;
+    --text: #F5F1E8;
     --textInvert: #131313;
-    --secondary: #f0008c;
-    --secondary-opacity: rgba(240, 0, 140, 0.5);
-    --secondary-text: #f0f0ff;
+    --secondary: #D4AF37;
+    --secondary-opacity: rgba(212, 175, 55, 0.5);
+    --secondary-text: #161616;
     --transparent: #232530;
 
     --accent: #90caf9;

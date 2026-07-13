@@ -164,6 +164,21 @@ export function updateSettings(data: any) {
             })
         }
 
+        // update gold accent (magenta #F0008C -> gold #D4AF37)
+        const preGoldAccent = currentTheme.colors.secondary?.toLowerCase() === "#f0008c"
+        if (data.theme === "default" && preGoldAccent) {
+            themes.update((a) => {
+                if (a.default?.colors) {
+                    a.default.colors.secondary = "#D4AF37"
+                    a.default.colors["secondary-opacity"] = "rgba(212, 175, 55, 0.5)"
+                    a.default.colors["secondary-text"] = "#161616"
+                    if (a.default.colors.text?.toLowerCase() === "#f0f0ff") a.default.colors.text = "#F5F1E8"
+                    currentTheme = a.default
+                }
+                return a
+            })
+        }
+
         updateThemeValues(currentTheme)
     }
 
