@@ -37,6 +37,25 @@
     function loaded() {
         hasLoaded = true
         dispatch("loaded", true)
+        logVideoState("loadedmetadata")
+        setTimeout(() => logVideoState("after-800ms"), 800)
+    }
+
+    // Opt-in playback diagnostics (set VITE_GOC_DEBUG=1). Reports real path/src/state so we can tell
+    // whether a video is stuck paused, has a media error, or is genuinely playing.
+    function logVideoState(tag: string) {
+        if (import.meta.env.VITE_GOC_DEBUG !== "1" || !video) return
+        console.info(`[GOC_VIDEO ${tag}]`, {
+            path,
+            currentSrc: video.currentSrc,
+            networkState: video.networkState,
+            readyState: video.readyState,
+            paused: video.paused,
+            currentTime: Number(video.currentTime.toFixed(2)),
+            videoWidth: video.videoWidth,
+            error: video.error ? { code: video.error.code, message: video.error.message } : null,
+            mirror
+        })
     }
 
     // Pingback after 30 playing seconds on videos where tracking is required
@@ -140,6 +159,25 @@
     $: mediaStyleBlurString = `position: absolute;filter: ${mediaStyle.filter || ""} blur(${mediaStyle.fitOptions?.blurAmount ?? 6}px) opacity(${mediaStyle.fitOptions?.blurOpacity || 0.3});object-fit: cover;width: 100%;height: 100%;transform: scale(${mediaStyle.flipped ? "-1" : "1"}, ${mediaStyle.flippedY ? "-1" : "1"});`
 
     let blurVideo: HTMLVideoElement | null = null
+
+    // Ignore ONLY the expected AbortError that fires when a pending play() request is interrupted by a
+    // pause()/element removal during cleanup or rapid slide changes (see cleanupVideo in onDestroy, and
+    // Svelte's bind:paused). Real media errors (e.g. NotSupportedError) are still thrown, so the on:error
+    // retry handling in Media.svelte keeps working. Patched once per element.
+    function makePlaySafe(el: HTMLVideoElement | null) {
+        if (!el || (el as any)._safePlayPatched) return
+        ;(el as any)._safePlayPatched = true
+        const originalPlay = el.play.bind(el)
+        el.play = () =>
+            originalPlay().catch((err: any) => {
+                if (err?.name === "AbortError") return
+                throw err
+            })
+    }
+    $: makePlaySafe(video)
+    $: makePlaySafe(blurVideo)
+    $: makePlaySafe(softLoopVideo)
+
     $: if (blurVideo && (videoTime < blurVideo.currentTime - 0.1 || videoTime > blurVideo.currentTime + 0.1)) blurVideo.currentTime = videoTime
     $: if (!videoData.paused && blurVideo?.paused) blurVideo.play()
     $: blurPausedState = videoData.paused

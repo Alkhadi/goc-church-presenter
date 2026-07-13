@@ -87,6 +87,35 @@ function auditShow(filePath) {
     return { file: filePath, id, name: show.name || "", issues }
 }
 
+// Scan the shows index (shows.json) which maps show id -> { name, category, ... }.
+// Corrupt scripture names (e.g. "NKJVCundefinedbTN") persist here from older imports.
+function auditShowsIndex(indexPath) {
+    if (!indexPath || !fs.existsSync(indexPath)) return null
+
+    let parsed
+    try {
+        parsed = JSON.parse(fs.readFileSync(indexPath, "utf8"))
+    } catch {
+        return { file: indexPath, entries: [], note: "<invalid JSON, skipped>" }
+    }
+
+    const entries = []
+    for (const [id, entry] of Object.entries(parsed || {})) {
+        if (entry && typeof entry.name === "string" && BROKEN.test(entry.name)) {
+            entries.push({ id, name: entry.name })
+        }
+    }
+    return { file: indexPath, entries }
+}
+
+function getIndexArg() {
+    const arg = process.argv.find((a) => a.startsWith("--index="))
+    if (arg) return arg.slice("--index=".length).replace(/^"|"$/g, "")
+    const appData = process.env.APPDATA || ""
+    const candidates = [path.join(appData, "FreeShow", "shows.json"), path.join(appData, "GOC Church Presenter", "shows.json")]
+    return candidates.find((p) => p && fs.existsSync(p)) || ""
+}
+
 function main() {
     const dir = getDirArg()
     if (!dir || !fs.existsSync(dir)) {
@@ -108,19 +137,33 @@ function main() {
 
     if (!affected.length) {
         console.log("No shows with literal 'undefined'/'null' in name, group, or reference were found.")
-        return
+    } else {
+        console.log(`Found ${affected.length} show(s) with suspicious names/groups:\n`)
+        for (const a of affected) {
+            console.log(`- ${path.basename(a.file)}`)
+            console.log(`    id:   ${a.id}`)
+            console.log(`    name: ${a.name}`)
+            for (const issue of a.issues) console.log(`    > ${issue}`)
+            console.log("")
+        }
     }
 
-    console.log(`Found ${affected.length} show(s) with suspicious names/groups:\n`)
-    for (const a of affected) {
-        console.log(`- ${path.basename(a.file)}`)
-        console.log(`    id:   ${a.id}`)
-        console.log(`    name: ${a.name}`)
-        for (const issue of a.issues) console.log(`    > ${issue}`)
-        console.log("")
+    // Also scan the shows index (shows.json)
+    const indexPath = getIndexArg()
+    const indexResult = auditShowsIndex(indexPath)
+    console.log("")
+    if (!indexResult) {
+        console.log("Shows index (shows.json) not found; skipped. Pass one with --index=\"C:\\path\\to\\shows.json\".")
+    } else if (indexResult.note) {
+        console.log(`Shows index ${indexResult.file}: ${indexResult.note}`)
+    } else if (!indexResult.entries.length) {
+        console.log(`Shows index ${indexResult.file}: no suspicious names found.`)
+    } else {
+        console.log(`Shows index ${indexResult.file}: ${indexResult.entries.length} suspicious name(s):`)
+        for (const e of indexResult.entries) console.log(`    ${e.id}  >  "${e.name}"`)
     }
 
-    console.log("This report is informational only. No repair has been performed.")
+    console.log("\nThis report is informational only. No repair has been performed.")
 }
 
 main()

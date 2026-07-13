@@ -5,7 +5,7 @@ import { AudioPlayer } from "../../audio/audioPlayer"
 import type { ShowObj } from "../../classes/Show"
 import { fixShowIssues } from "../../converters/importHelpers"
 import { requestMain } from "../../IPC/main"
-import { cachedShowsData, categories, isDev, notFound, saved, shows, showsCache, textCache } from "../../stores"
+import { cachedShowsData, categories, notFound, saved, shows, showsCache, textCache } from "../../stores"
 import { invalidateSearchIndex } from "../../utils/searchFast"
 import { Main } from "./../../../types/IPC/Main"
 import { getFileName } from "./media"
@@ -81,7 +81,8 @@ export async function setShow(id: string, value: "delete" | Show): Promise<Show>
         return a
     })
 
-    if (get(isDev)) console.info("SHOW UPDATED: ", id, value)
+    // Opt-in verbose trace (set VITE_GOC_DEBUG=1) to avoid flooding the console during normal dev.
+    if (import.meta.env.VITE_GOC_DEBUG === "1") console.info("SHOW UPDATED: ", id, value)
 
     if (value && value !== "delete") {
         cachedShowsData.update((a) => {

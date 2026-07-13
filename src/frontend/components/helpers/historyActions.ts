@@ -1115,7 +1115,8 @@ export const historyActions = ({ obj, undo = null }: any) => {
         console.error(obj.id, "HISTORY ERROR:", msg)
     }
 
-    if (obj) console.info("HISTORY " + (initializing ? "INIT" : undo ? "UNDO" : "REDO") + ` [${obj.id}]:`, clone(obj))
+    // Opt-in verbose trace (set VITE_GOC_DEBUG=1) to avoid flooding the console during normal dev.
+    if (obj && import.meta.env.VITE_GOC_DEBUG === "1") console.info("HISTORY " + (initializing ? "INIT" : undo ? "UNDO" : "REDO") + ` [${obj.id}]:`, clone(obj))
 
     return actions
 }

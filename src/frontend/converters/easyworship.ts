@@ -1,7 +1,7 @@
 import { get } from "svelte/store"
 import { uid } from "uid"
 import { DEFAULT_ITEM_STYLE } from "../components/edit/scripts/itemHelpers"
-import { getSlidesText } from "../components/edit/scripts/textStyle"
+import { getItemTextArray, getSlidesText } from "../components/edit/scripts/textStyle"
 import { setQuickAccessMetadata } from "../components/helpers/setShow"
 import { checkName, getGlobalGroup } from "../components/helpers/show"
 import { newToast } from "../utils/common"
@@ -92,8 +92,13 @@ export function convertEasyWorship(data: any) {
 
         show.slides = slides
         show.layouts = { [layoutID]: { name: translateText("example.default"), notes: song?.description || "", slides: layout } }
-        const allText = trimNameFromString(getSlidesText(slides))
-        show.name = checkName(song?.title || allText || showId, showId)
+        const allText = getSlidesText(slides)
+        // Build a newline-separated version of the lyrics so the auto-generated name uses a single clean
+        // line (title or first lyric line) instead of lyric text concatenated together without spacing.
+        const nameSource = Object.values(slides)
+            .flatMap((slide: any) => (slide.items || []).flatMap((item: any) => getItemTextArray(item)))
+            .join("\n")
+        show.name = checkName(song?.title || trimNameFromString(nameSource) || showId, showId)
         show.settings.template = "default"
 
         if (allText.length) tempShows.push({ id: showId, show })
