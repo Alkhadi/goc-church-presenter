@@ -23,7 +23,6 @@
     export let fontPreview = false
     export let isTemplatePreview = false
     export let mirror = true
-    export let isMirrorItem = false
     export let isOutputted = false
     export let ratio = 1
     export let outputId = ""
@@ -31,7 +30,6 @@
     export let backdropFilter = ""
     export let key = false
     export let transition: Transition | null = null
-    export let disableListTransition = false
     export let smallFontSize = false
     export let animationStyle: any = {}
     export let dynamicValues = true
@@ -129,7 +127,7 @@
     $: if (!outputId) customOutputId = getActiveOutputs($outputs, true, true, true)[0]
 
     function getCustomStyle(currentStyle: string, outputId = "", styleIdOverride = "", _updater: any = null) {
-        if (outputId && !isMirrorItem && !isStage) {
+        if (outputId && !isStage) {
             let outputResolution = getOutputResolution(outputId, $outputs, true, styleIdOverride)
             currentStyle = percentageStylePos(currentStyle, outputResolution)
         }
@@ -872,7 +870,7 @@
             {updateDynamicValues}
         />
     {:else}
-        <SlideItems {item} {slideIndex} {preview} {isTemplatePreview} {mirror} {isMirrorItem} {ratio} {disableListTransition} {smallFontSize} {ref} {fontSize} {outputId} />
+        <SlideItems {item} {slideIndex} {preview} {isTemplatePreview} {mirror} {ratio} {smallFontSize} {ref} {fontSize} {outputId} />
     {/if}
 </div>
 

@@ -11,9 +11,7 @@
     import Chart from "./views/Chart.svelte"
     import DynamicEvents from "./views/DynamicEvents.svelte"
     import IconItem from "./views/IconItem.svelte"
-    import ListView from "./views/ListView.svelte"
     import MediaItem from "./views/MediaItem.svelte"
-    import Mirror from "./views/Mirror.svelte"
     import SlideProgress from "./views/SlideProgress.svelte"
     import Table from "./views/Table.svelte"
     import Timer from "./views/Timer.svelte"
@@ -32,8 +30,6 @@
     export let cropPreviewMode = false
     export let isTemplatePreview = false
     export let mirror = true
-    export let isMirrorItem = false
-    export let disableListTransition = false
     export let smallFontSize = false
     export let fontSize = 0
     export let outputId = ""
@@ -103,11 +99,6 @@
     <DynamicEvents {...item.events} textSize={smallFontSize ? (-1.1 * $slidesOptions.columns + 10) * 5 : Number(getStyles(item.style, true)?.["font-size"]) || 80} />
 {:else if item.type === "weather"}
     <Weather data={item.weather || {}} />
-{:else if item.type === "mirror"}
-    <!-- no mirrors in mirrors! -->
-    {#if !isMirrorItem}
-        <Mirror {item} {ref} {ratio} index={slideIndex} {edit} />
-    {/if}
 {:else if item.type === "visualizer"}
     <Visualizer {item} {preview} {edit} />
 {:else if item.type === "captions"}
@@ -116,9 +107,6 @@
     <IconItem {item} {ratio} />
 {:else if item.type === "metronome"}
     <MetronomeVisualizer isItem />
-{:else if item.type === "list"}
-    <!-- moved to textbox in 1.3.3 -->
-    <ListView list={item.list} disableTransition={edit || disableListTransition} />
 {:else if item.type === "variable"}
     <!-- moved to textbox in 1.3.3 -->
     <Variable {item} style={variableStyleString} ref={{ ...ref, slideIndex }} hideText={edit ? false : (ref.type === "stage" && !!$currentWindow) || preview} {edit} />

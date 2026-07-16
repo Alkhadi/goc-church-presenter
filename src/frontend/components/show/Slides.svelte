@@ -79,8 +79,8 @@
         if (!scrollElem) return
         if (await hasNewerUpdate("SHOWS_SCROLL_OFFSET", 10)) return
 
-        let output = $outputs[activeOutputs[0]] || {}
-        if (showId === output.out?.slide?.id && activeLayout === output.out?.slide?.layout) {
+        let output = $outputs[activeOutputs[0]]
+        if (output?.out?.slide && showId === output.out.slide.id && activeLayout === output.out.slide.layout) {
             let columns = mode === "grid" ? ($slidesOptions.columns > 2 ? $slidesOptions.columns : 0) : 1
             let index = Math.max(0, (output.out.slide.index || 0) - columns)
             offset = ((scrollElem?.querySelector(".grid")?.children[index] as HTMLElement)?.offsetTop || 5) - 5
@@ -280,6 +280,7 @@
             let outSlide = currentOutput.out?.slide || $outputSlideCache[a] || {}
 
             if (activeSlides[outSlide.index] || outSlide.id !== showId || outSlide.layout !== activeLayout) return
+            if (projectIndex !== -1 && outSlide.projectIndex !== undefined && outSlide.projectIndex !== projectIndex) return
 
             let ref = outSlide?.id === "temp" ? [{ temp: true, items: outSlide.tempItems, id: "" }] : _show(outSlide.id).layouts([outSlide.layout]).ref()[0] || []
             let showSlide = outSlide.index !== undefined ? _show(outSlide.id).slides([ref[outSlide.index]?.id]).get()?.[0] : null

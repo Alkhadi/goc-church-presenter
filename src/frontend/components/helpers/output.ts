@@ -8,13 +8,13 @@ import type { Item, Layout, LayoutRef, Media, OutSlide, Show, Slide, SlideData, 
 import { AudioAnalyser } from "../../audio/audioAnalyser"
 import { fadeinAllPlayingAudio, fadeoutAllPlayingAudio } from "../../audio/audioFading"
 import { sendMain } from "../../IPC/main"
-import { actions, activeProject, activeRename, activeShow, activeTimers, allOutputs, categories, connections, currentOutputSettings, customMessageCredits, disabledServers, effects, lockedOverlays, media, outputDisplay, outputs, outputSlideCache, outputState, overlays, overlayTimers, playingVideos, projects, scriptures, scriptureSettings, serverData, showsCache, special, stageShows, styles, templates, theme, themes, transitionData, usageLog } from "../../stores"
+import { actions, activeFocus, activeProject, activeRename, activeShow, activeTimers, allOutputs, categories, connections, currentOutputSettings, customMessageCredits, disabledServers, effects, focusMode, lockedOverlays, media, outputDisplay, outputs, outputSlideCache, outputState, overlays, overlayTimers, playingVideos, projects, scriptures, scriptureSettings, serverData, showsCache, special, stageShows, styles, templates, theme, themes, transitionData, usageLog } from "../../stores"
 import { trackScriptureUsage } from "../../utils/analytics"
 import { isMainWindow, isOutputWindow, newToast } from "../../utils/common"
 import { translateText } from "../../utils/language"
 import { confirmCustom } from "../../utils/popup"
 import { send } from "../../utils/request"
-import { sendBackgroundToStage } from "../../utils/stageTalk"
+import { hasStageStreamViewers, sendBackgroundToStage } from "../../utils/stageTalk"
 import { TemplateHelper } from "../../utils/templates"
 import { videoExtensions } from "../../values/extensions"
 import { customActionActivation, runAction } from "../actions/actions"
@@ -107,7 +107,7 @@ export function setOutput(type: string, data: any, toggle = false, outputId = ""
         }
 
         // store project index so we can use it for dynamic values (in case there are multiple of the same project item)
-        const active = get(activeShow)
+        const active = get(focusMode) ? get(activeFocus) : get(activeShow)
         if (active?.id === data.id && active?.index !== undefined) {
             data.projectIndex = active.index
         }
@@ -688,10 +688,12 @@ export function checkWindowCapture(startup = false) {
 // NDI | OutputShow | Stage CurrentOutput | WebRTC
 export function shouldBeCaptured(outputId: string, startup = false) {
     const output = get(outputs)[outputId]
+    const stageConnectionIds = Object.keys(get(connections).STAGE || {})
     const captures = {
         ndi: !!output.ndi,
         server: !!(get(disabledServers).output_stream === false && (get(serverData)?.output_stream?.outputId || getFirstOutput()?.id) === outputId),
-        stage: !get(disabledServers).stage && Object.keys(get(connections).STAGE || {}).length > 0 && stageHasOutput(outputId),
+        // only capture while a connected stage client is actually viewing a "current output" mirror (text-only stage displays need no capture)
+        stage: !get(disabledServers).stage && stageConnectionIds.length > 0 && stageHasOutput(outputId) && hasStageStreamViewers(stageConnectionIds, outputId),
         webrtc: !!output.webrtc
     }
 
