@@ -11,11 +11,10 @@ import type { ValidChannels } from "../types/Channels"
 
 // wait to log messages until after intial load is done
 let appLoaded = false
-// Verbose IPC tracing (TO ELECTRON / TO CLIENT) is opt-in to avoid flooding the console during normal dev.
-// Enable by launching with the GOC_DEBUG_IPC=1 environment variable.
+// Verbose IPC tracing is opt-in to prevent excessive console output.
+// Enable it by launching with the GOC_DEBUG_IPC=1 environment variable.
 const LOG_MESSAGES: boolean = process.env.GOC_DEBUG_IPC === "1"
-const filteredChannelsData: string[] = ["AUDIO_MAIN", "VISUALIZER_DATA", "STREAM", "BUFFER", "REQUEST_STREAM", "MAIN_TIME", "MAIN_SLIDE_VIDEO", "GET_THUMBNAIL", "ACTIVE_TIMERS", "RECEIVE_STREAM", "CHECK_RAM_USAGE", "TIMECODE_VALUE", "TIMECODE_AUDIO_DATA", "SPOTIFY_GET_STATE"]
-const filteredChannels: ValidChannels[] = ["AUDIO"]
+const filteredChannelsData: string[] = ["AUDIO_MAIN", "VISUALIZER_DATA", "STREAM", "BUFFER", "REQUEST_STREAM", "MAIN_TIME", "MAIN_SLIDE_VIDEO", "GET_THUMBNAIL", "ACTIVE_TIMERS", "RECEIVE_STREAM", "CHECK_RAM_USAGE", "TIMECODE_VALUE", "TIMECODE_AUDIO_DATA", "SPOTIFY_GET_STATE"]const filteredChannels: ValidChannels[] = ["AUDIO"]
 
 // FreeShow multiplexes many independent subscriptions over a few shared IPC channels (notably MAIN
 // and OUTPUT). A single ipcRenderer channel can therefore legitimately have more than Node's default

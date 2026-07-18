@@ -6,10 +6,12 @@ import type { BrowserWindowConstructorOptions } from "electron"
 import { join } from "path"
 import { isMac, isProd } from ".."
 
+const GOC_ICON_PATH = join(__dirname, "..", "..", "public", process.platform === "win32" ? "icon.ico" : "icon.png")
+
 export const loadingOptions: BrowserWindowConstructorOptions = {
     width: 500,
     height: 280,
-    icon: "public/icon.png",
+    icon: GOC_ICON_PATH,
     transparent: true,
     alwaysOnTop: true,
     resizable: false,
@@ -21,7 +23,7 @@ export const loadingOptions: BrowserWindowConstructorOptions = {
 }
 
 export const mainOptions: BrowserWindowConstructorOptions = {
-    icon: "public/icon.png",
+    icon: GOC_ICON_PATH,
     backgroundColor: "#242832",
     titleBarStyle: isMac ? "hidden" : "default",
     trafficLightPosition: { x: 10, y: 12 }, // mac buttons
@@ -39,7 +41,7 @@ export const mainOptions: BrowserWindowConstructorOptions = {
 }
 
 export const outputOptions: BrowserWindowConstructorOptions = {
-    icon: "public/icon.png",
+    icon: GOC_ICON_PATH,
     backgroundColor: "#000000",
     transparent: true,
     show: false,

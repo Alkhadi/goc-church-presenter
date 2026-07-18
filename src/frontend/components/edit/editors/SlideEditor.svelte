@@ -2,9 +2,9 @@
     import { onMount } from "svelte"
     import type { MediaStyle } from "../../../../types/Main"
     import type { ItemType } from "../../../../types/Show"
-    import { activeEdit, activePopup, activeShow, alertMessage, focusMode, labelsDisabled, media, outputs, overlays, refreshEditSlide, resized, showsCache, slideNotesActive, special, styles, textEditActive } from "../../../stores"
+    import { activeEdit, activePopup, activeShow, alertMessage, editMode, focusMode, media, outputs, overlays, refreshEditSlide, resized, showsCache, slideNotesActive, special, styles } from "../../../stores"
     import { transposeText } from "../../../utils/chordTranspose"
-    import { DEFAULT_WIDTH, triggerFunction } from "../../../utils/common"
+    import { DEFAULT_WIDTH } from "../../../utils/common"
     import { translateText } from "../../../utils/language"
     import { getAccess } from "../../../utils/profile"
     import { slideHasAction } from "../../actions/actions"
@@ -35,7 +35,7 @@
     import Editbox from "../editbox/Editbox.svelte"
     import { getUsedChords } from "../scripts/chords"
     import { addItem } from "../scripts/itemHelpers"
-    import { getSlideText, setCaretAtEnd } from "../scripts/textStyle"
+    import { setCaretAtEnd } from "../scripts/textStyle"
     import { centerZoom } from "../scripts/zoom"
 
     $: currentShowId = $activeShow?.id || $activeEdit.showId || ""
@@ -204,7 +204,7 @@
         zoom = e.detail
         const origin = zoomOrigin
         zoomOrigin = null
-        centerZoom(zoom, origin, scrollElem, ".droparea")
+        centerZoom(origin, scrollElem, ".droparea")
     }
 
     // CHORDS
@@ -224,11 +224,6 @@
         } else {
             chordsAction = ""
         }
-    }
-
-    let chordsMode = false
-    function toggleChords() {
-        chordsMode = !chordsMode
     }
 
     // transpose chords - same as TextEditor
@@ -290,13 +285,11 @@
     let bottomHeight = 40
 
     $: notes = Slide?.notes?.replaceAll("\n", "&nbsp;")
-    $: notesVisible = !!notes // && !chordsMode
+    $: notesVisible = !!notes // && $editMode !== "chords"
 
     const shortcutItems: { id: ItemType; icon?: string }[] = [{ id: "text" }, { id: "media", icon: "image" }, { id: "timer" }]
 
     $: widthOrHeight = getStyleResolution(resolution, width, height, "fit", { zoom })
-
-    $: hasTextContent = getSlideText(Slide)?.length
 
     // BACKGROUND
 
@@ -336,13 +329,7 @@
     <div class="parent" class:noOverflow={zoom >= 1} bind:this={scrollElem} bind:offsetWidth={width} bind:offsetHeight={height}>
         {#if Slide}
             <DropArea id="edit" file>
-                <Zoomed background={(transparentOutput || $special.transparentSlides) && !background ? "transparent" : background ? "black" : Slide?.settings?.color || currentStyle.background || "black"} {checkered} border={checkered} {resolution} style={widthOrHeight} bind:ratio {hideOverflow} center={zoom >= 1}>
-                    <!-- <div class="chordsButton" style="zoom: {1 / ratio};">
-                        <Button on:click={toggleChords}>
-                            <Icon id="chords" white={!chordsMode} />
-                        </Button>
-                    </div> -->
-
+                <Zoomed background={(transparentOutput || $special.transparentSlides) && !background ? "transparent" : background ? "black" : Slide?.settings?.color || currentStyle.background || "black"} {checkered} border={checkered} {resolution} style={widthOrHeight} bind:ratio {hideOverflow} center>
                     <!-- background -->
                     {#if !altKeyPressed && background}
                         <div class="background" style="zoom: {1 / ratio};opacity: 0.5;{slideFilter};height: 100%;width: 100%;">
@@ -355,7 +342,7 @@
                         {#if !altKeyPressed && layoutSlide.overlays?.length}
                             {#each layoutSlide.overlays as id}
                                 {#if $overlays[id]}
-                                    {#each $overlays[id].items as item}
+                                    {#each $overlays[id]?.items || [] as item}
                                         <Textbox {item} ref={{ type: "overlay", id }} />
                                     {/each}
                                 {/if}
@@ -372,7 +359,7 @@
                         {#each Slide.items as item, index}
                             <!-- filter={layoutSlide.filterEnabled?.includes("foreground") ? layoutSlide.filter : ""} -->
                             <!-- backdropFilter={layoutSlide.filterEnabled?.includes("foreground") ? layoutSlide["backdrop-filter"] : ""} -->
-                            <Editbox backdropFilter={layoutSlide["backdrop-filter"] || ""} {item} {chordsMode} {chordsAction} ref={{ showId: currentShowId, id: Slide.id, origin: currentShow.origin }} {index} {ratio} bind:mouse />
+                            <Editbox backdropFilter={layoutSlide["backdrop-filter"] || ""} {item} chordsMode={$editMode === "chords"} {chordsAction} ref={{ showId: currentShowId, id: Slide.id, origin: currentShow.origin }} {index} {ratio} bind:mouse />
                         {/each}
                     {/key}
                 </Zoomed>
@@ -403,7 +390,7 @@
 
     {#if !$focusMode && !isLocked && !$slideNotesActive && !$special.slideTimelineActive}
         <!-- && Slide?.items?.length -->
-        {#if !chordsMode && !widthOrHeight.includes("height")}
+        {#if $editMode !== "chords" && !hasBackground && !widthOrHeight.includes("height")}
             <FloatingInputs bottom={notesVisible ? bottomHeight : 10} side="center">
                 {#each shortcutItems as item}
                     <MaterialButton title="settings.add: items.{item.id}" on:click={() => addItem(item.id)}>
@@ -413,56 +400,20 @@
             </FloatingInputs>
         {/if}
 
-        <FloatingInputs bottom={notesVisible ? bottomHeight : 10} arrow let:open>
-            <MaterialZoom hidden={!open} columns={zoom} min={0.2} max={4} defaultValue={1} addValue={0.1} on:change={updateZoom} on:origin={(e) => (zoomOrigin = e.detail)} />
-
-            {#if open}
-                <div class="divider"></div>
-
-                {#if hasTextContent}
-                    <MaterialButton title="edit.insert_virtual_break" on:click={() => triggerFunction("insert_virtual_break")}>
-                        <Icon id="add" white />
-                        {#if !$labelsDisabled}<T id="edit.insert_virtual_break" />{/if}
-                    </MaterialButton>
-
-                    <div class="divider"></div>
-                {/if}
-            {/if}
-
-            <!-- no need to add chords on scripture/events -->
-            {#if !currentShow?.reference?.type && Slide && !isLocked && hasTextContent}
-                <!-- {#if open || slideChords.length} -->
-                <MaterialButton isActive={chordsMode} on:click={toggleChords} title="edit.chords">
-                    <Icon id="chords" white={!slideChords.length} />
-                    <!-- {#if open && !$labelsDisabled}<T id="edit.chords" />{/if} -->
-                </MaterialButton>
-                <!-- {/if} -->
-
-                {#if open}
-                    <div class="divider"></div>
-                {/if}
-            {/if}
-
-            <MaterialButton title="show.text [Ctrl+Shift+T]" on:click={() => textEditActive.set(true)}>
-                <Icon id="text_edit" white />
-                <!-- {#if open && !$labelsDisabled}<p><T id="show.text" /></p>{/if} -->
-            </MaterialButton>
+        <FloatingInputs bottom={notesVisible ? bottomHeight : 10}>
+            <MaterialZoom columns={zoom} min={0.2} max={4} defaultValue={1} addValue={0.1} on:change={updateZoom} on:origin={(e) => (zoomOrigin = e.detail)} />
         </FloatingInputs>
 
-        {#if chordsMode}
-            <FloatingInputs side="left" bottom={notesVisible ? bottomHeight : 10} arrow let:open>
-                <div slot="menu">
-                    <MaterialButton on:click={transposeUp} title="edit.transpose_up">
-                        <Icon id="arrow_up" size={1.3} white />
-                    </MaterialButton>
-                    <MaterialButton on:click={transposeDown} title="edit.transpose_down">
-                        <Icon id="arrow_down" size={1.3} white />
-                    </MaterialButton>
-                </div>
+        {#if $editMode === "chords"}
+            <FloatingInputs side="left" bottom={notesVisible ? bottomHeight : 10}>
+                <MaterialButton on:click={transposeUp} title="edit.transpose_up">
+                    <Icon id="arrow_up" size={1.3} white />
+                </MaterialButton>
+                <MaterialButton on:click={transposeDown} title="edit.transpose_down">
+                    <Icon id="arrow_down" size={1.3} white />
+                </MaterialButton>
 
-                {#if open}
-                    <div class="divider"></div>
-                {/if}
+                <div class="divider"></div>
 
                 <MaterialButton isActive={!chordsAction} on:click={setDefaultChordsAction}>
                     <p><T id="popup.choose_chord" /></p>

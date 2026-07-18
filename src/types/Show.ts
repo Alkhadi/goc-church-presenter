@@ -119,7 +119,7 @@ export interface Item {
     events?: DynamicEvent
     type?: ItemType
     decoration?: boolean // ppt imported shapes & scripture items (no selection directly)
-    mirror?: Mirror
+
     src?: string // media item path
     customSvg?: string
     device?: any // camera
@@ -244,6 +244,8 @@ export interface DynamicEvent {
     enableStartDate: boolean
     startDate?: string
     startTime?: string
+    fromTime?: string
+    toTime?: string
 }
 
 export interface Scrolling {
@@ -270,15 +272,6 @@ export interface Weather {
     altitude?: number
     useFahrenheit?: boolean
     longRange?: boolean
-}
-
-export interface Mirror {
-    show?: string
-    stage?: string
-    enableStage?: boolean
-    nextSlide?: boolean
-    useSlideIndex?: boolean
-    index?: number
 }
 
 export interface Line {
@@ -640,7 +633,7 @@ export interface Tag {
 // types
 
 export type ID = string
-export type ItemType = "text" | "list" | "media" | "camera" | "timer" | "clock" | "button" | "events" | "weather" | "variable" | "web" | "mirror" | "icon" | "slide_tracker" | "visualizer" | "captions" | "metronome" | "current_output" | "chart" | "table" // "shape" | "video"
+export type ItemType = "text" | "media" | "camera" | "timer" | "clock" | "button" | "events" | "weather" | "variable" | "web" | "icon" | "slide_tracker" | "visualizer" | "captions" | "metronome" | "current_output" | "chart" | "table" // "shape" | "video"
 export type ShowType = "DIVIDER" | "show" | "image" | "video" | "audio" | "player" | "section" | "overlay" | "effect" | "pdf" | "ppt" | "screen" | "ndi" | "camera" | "folder" | "show_placeholder" // "private"
 export type TransitionType = "none" | "blur" | "fade" | "crossfade" | "fly" | "scale" | "slide" | "spin"
 export type MediaType = "media" | "video" | "image" | "effect" | "screen" | "ndi" | "camera" | "player" | "audio"

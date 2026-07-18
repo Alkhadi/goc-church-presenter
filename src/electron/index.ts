@@ -36,6 +36,8 @@ const RECORD_STARTUP_TIME = false
 
 // get os platform
 export const isWindows: boolean = process.platform === "win32"
+export const GOC_APP_USER_MODEL_ID = "org.gocsc.gocshow"
+if (isWindows) app.setAppUserModelId(GOC_APP_USER_MODEL_ID)
 export const isMac: boolean = process.platform === "darwin"
 export const isLinux: boolean = process.platform === "linux"
 
@@ -52,7 +54,7 @@ config.set("loaded", true)
 if (!config.get("loaded")) console.error("Could not get stored data!")
 
 // info
-console.info("Starting FreeShow...")
+console.info("Starting GocShow...")
 if (!isProd) console.info("Building app! (This may take 20-90 seconds)")
 
 // set application menu

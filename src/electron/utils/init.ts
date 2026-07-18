@@ -1,6 +1,6 @@
 import { app, screen, type BrowserWindow } from "electron"
 import path from "path"
-import { isProd, isWindows, setAutoProfile } from ".."
+import { GOC_APP_USER_MODEL_ID, isProd, isWindows, setAutoProfile } from ".."
 import { catchErrors } from "../IPC/responsesMain"
 import { detectNewFiles, doesPathExist } from "./files"
 import { initSpotify } from "./spotify"
@@ -30,7 +30,7 @@ export function mainWindowInitialize() {
     // require("../servers")
 
     // set app title to app name
-    if (isWindows) app.setAppUserModelId(app.name)
+    if (isWindows) app.setAppUserModelId(GOC_APP_USER_MODEL_ID)
 
     detectNewFiles()
 

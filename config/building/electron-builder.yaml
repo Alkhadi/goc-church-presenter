@@ -1,6 +1,6 @@
-appId: app.freeshow
-productName: GOC Church Presenter
-artifactName: GOC-Church-Presenter-${version}-${arch}.${ext}
+appId: org.gocsc.gocshow
+productName: GocShow
+artifactName: GocShow-${version}-${arch}.${ext}
 
 # WIDEVINE
 # Use castlabs electron builds to get widevine support
@@ -28,16 +28,18 @@ extraResources:
 
 win:
     target: NSIS
-    icon: build/public/icon.png
+    icon: build/public/icon.ico
+
+    executableName: GocShow
     asarUnpack:
         - "**/node_modules/macadam/**/*.node"
         - "**/node_modules/libspotifyctl/**/*"
-    azureSignOptions:
-        publisherName: Live Church Solutions
-        endpoint: https://wus2.codesigning.azure.net/
-        certificateProfileName: FreeShow
-        codeSigningAccountName: FreeShow
 
+nsis:
+    shortcutName: GocShow
+    uninstallDisplayName: GocShow ${version}
+    createDesktopShortcut: true
+    createStartMenuShortcut: true
 # linux
 
 linux:
